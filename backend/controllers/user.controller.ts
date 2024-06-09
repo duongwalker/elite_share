@@ -1,12 +1,6 @@
 import pool from "../db/connection"
 import bcrypt from "bcrypt"
-
-export interface User {
-  id: number
-  name: string
-  email: string
-  password: string
-}
+import { User } from "../models/user.model"
 
 export async function getAllUsers() {
   const [rows] = await pool.query("SELECT * FROM users")

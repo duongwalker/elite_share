@@ -1,6 +1,10 @@
 import express, { Request, Response } from "express"
-import { User, getAllUsers, getUserById, createUser } from "../models/user"
-
+import { User } from "../models/user.model"
+import {
+  getAllUsers,
+  getUserById,
+  createUser,
+} from "../controllers/user.controller"
 const userRouter = express.Router()
 
 userRouter.get("/users", async (req: Request, res: Response) => {
@@ -31,7 +35,5 @@ userRouter.post("/users", async (req: Request, res: Response) => {
     }
   }
 })
-
-
 
 export default userRouter

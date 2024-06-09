@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 app.use(userRouter);
-app.use(groupRouter)
+app.use(groupRouter);
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
