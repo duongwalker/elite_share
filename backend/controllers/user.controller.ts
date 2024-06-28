@@ -15,10 +15,19 @@ export async function getUserById(id: number) {
   return null
 }
 
+export async function getUserByName(name: string) {
+  const [rows] = await pool.query("SELECT * FROM users WHERE name = ?", [name])
+  if (Array.isArray(rows) && rows.length > 0) {
+    return rows[0] as User
+  }
+  return null
+}
+
 export async function createUser(user: User) {
   try {
     const { name, email, password } = user
-    const hashedPassword = await bcrypt.hash(password, 10)
+    const saltRounds = 10
+    const hashedPassword = await bcrypt.hash(password, saltRounds)
     const [result] = await pool.query(
       "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
       [name, email, hashedPassword]
@@ -29,3 +38,5 @@ export async function createUser(user: User) {
     console.error("Error creating group:", err)
   }
 }
+
+

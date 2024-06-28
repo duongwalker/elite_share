@@ -10,7 +10,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className='flex w-full'>
-        <Navbar />
+        <Navbar />  
         <Routes>
         <Route path='/' element={<Dashboard />} />
           <Route path='dashboard' element={<Dashboard />} />

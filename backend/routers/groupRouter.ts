@@ -7,15 +7,26 @@ import {
   addUserToGroup,
   deleteUserFromGroup,
   deleteGroup,
+  getGroupsByUserId,
+  getExpensesInfoByGroupId,
 } from "../controllers/group.controller"
 
 const groupRouter = express.Router()
 
+// Get all group information
 groupRouter.get("/groups", async (req: Request, res: Response) => {
   const groups = await getAllGroups()
   res.json(groups)
 })
 
+// Get groupIds and groupNames by userId
+groupRouter.get("/user-groups/:userId", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.userId)
+  const groups = await getGroupsByUserId(id)
+  res.json(groups)
+})
+
+// Get all group information by group_id
 groupRouter.get("/groups/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id)
   const group = await getGroupById(id)
@@ -25,6 +36,26 @@ groupRouter.get("/groups/:id", async (req: Request, res: Response) => {
     res.status(404).json({ message: "Group not found" })
   }
 })
+
+groupRouter.get(
+  "/groups/:group_id/expenses",
+  async (req: Request, res: Response) => {
+    const group_id = parseInt(req.params.group_id)
+    try {
+      const expenses = await getExpensesInfoByGroupId(group_id)
+
+      if (expenses) {
+        res.status(200).json(expenses)
+      } else {
+        res.status(404).json({ message: "No expenses found for this group" })
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching expenses", error })
+    }
+  }
+)
 
 groupRouter.post("/groups", async (req: Request, res: Response) => {
   try {
@@ -57,10 +88,10 @@ groupRouter.delete("/groups/:id", async (req: Request, res: Response) => {
 groupRouter.post(
   "/groups/:group_id/addUser",
   async (req: Request, res: Response) => {
-    const user_id = parseInt(req.params.user_id)
-    const group_id = parseInt(req.body.group_id)
+    const user_id = parseInt(req.body.user_id)
+    const group_id = parseInt(req.params.group_id)
     if (!user_id) {
-      return res.status(400).json({ error: "user_id is required" })
+      res.status(400).json({ error: "user_id is required" })
     }
     try {
       const result = await addUserToGroup(group_id, user_id)
@@ -81,7 +112,7 @@ groupRouter.delete(
     const user_id = parseInt(req.params.user_id)
     const group_id = parseInt(req.body.group_id)
     if (!user_id) {
-      return res.status(400).json({ error: "user_id is required" })
+      res.status(400).json({ error: "user_id is required" })
     }
     try {
       const result = await deleteUserFromGroup(group_id, user_id)

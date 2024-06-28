@@ -49,7 +49,7 @@ export async function deleteGroup(group_id: GroupId) {
 
 export async function getAllUserFromGroup(groupId: GroupId) {
   try {
-    const users = await pool.query(
+    await pool.query(
       `SELECT u.name, g.group_name
       FROM users u
       JOIN group_members gm ON u.user_id = gm.user_id
@@ -59,7 +59,7 @@ export async function getAllUserFromGroup(groupId: GroupId) {
       [groupId]
     )
   } catch (err) {
-    console.error("Error creating group:", err)
+    console.error("Error:", err)
   }
 }
 
@@ -87,4 +87,42 @@ export async function deleteUserFromGroup(group_id: GroupId, user_id: UserId) {
   } catch (err) {
     console.error("Error creating group:", err)
   }
+}
+
+export async function getGroupsByUserId(user_id: number) {
+  const [rows] = await pool.query(
+    `
+  SELECT \`groups\`.group_id, \`groups\`.group_name
+  FROM (
+    (users
+    INNER JOIN group_members ON users.user_id = group_members.user_id)
+    INNER JOIN \`groups\` ON \`groups\`.group_id = group_members.group_id
+  )
+  WHERE users.user_id = ?;
+`,
+    [user_id]
+  )
+  if (Array.isArray(rows) && rows.length > 0) {
+    // const groupNames = rows.map((row: any) => row.group_name)
+    // console.log(groupNames)
+    return rows
+  }
+  return null
+}
+
+export async function getExpensesInfoByGroupId(group_id: number) {
+  const [rows] = await pool.query(
+    `SELECT expenses.group_id, expenses.description, expenses.amount, users.name
+    FROM expenses
+    JOIN users on expenses.created_by=users.user_id
+    WHERE expenses.group_id=?;`,[group_id]
+  )
+  if (Array.isArray(rows) && rows.length > 0) {
+    // const groupNames = rows.map((row: any) => row.group_name)
+    // console.log(groupNames)
+    console.log(rows)
+    return rows
+  }
+  return null
+
 }

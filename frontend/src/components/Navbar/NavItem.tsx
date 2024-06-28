@@ -13,9 +13,9 @@ const NavItem: React.FC<NavItemProps> = ({ name, path, icon }) => {
             <Link to={path}>
                 <li className='flex my-3 hover:text-[#464BD8] hover:bg-[#EEEEEE] hover:rounded-md    cursor-pointer'>
                     <img src={icon} className='w-8 h-8 mx-2' style={{ fill: 'blue' }}></img>
-                    <a className='mx-2 my-1'>
+                    <span className='mx-2 my-1'>
                         {name}
-                    </a>
+                    </span>
                 </li>
             </Link>
         </div>
