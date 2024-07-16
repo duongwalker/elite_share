@@ -23,6 +23,14 @@ export async function getUserByName(name: string) {
   return null
 }
 
+export async function getUserByEmail(email: string) {
+  const [rows] = await pool.query("SELECT * FROM users WHERE email = ?", [email])
+  if (Array.isArray(rows) && rows.length > 0) {
+    return rows[0] as User
+  }
+  return null
+}
+
 export async function createUser(user: User) {
   try {
     const { name, email, password } = user

@@ -1,7 +1,11 @@
 import * as jwt from 'jsonwebtoken'
 import { Request } from 'express'
+
+
+
+
 export type decodedUser = {
-    id?: string,
+   id: string,
 }
 declare module 'jsonwebtoken' {
     export interface UserJwtPayload extends jwt.JwtPayload {
@@ -10,5 +14,6 @@ declare module 'jsonwebtoken' {
 }
 
 export interface UserRequest extends Request {
+    // req: jwt.UserJwtPayload
     user?: decodedUser
 }

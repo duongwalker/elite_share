@@ -8,7 +8,8 @@ interface Group {
 }
 
 interface Expense {
-    group_id: number
+    group_id: number;
+    date: string
     description: string;
     amount: string;
     name: string;
@@ -18,9 +19,8 @@ interface Expense {
 const Groups = () => {
     const [groups, setGroups] = useState<Group[]>([]);
     const [expenses, setExpenses] = useState<Expense[]>([]);
-    // const [tableIsOpen, setTableIsOpen] = useState(false)
     const [visibleGroups, setVisibleGroups] = useState<{ [key: number]: boolean }>({});
-
+    const [userId, setUserId] = useState(null)
     const handleGroupClick = (groupId: number) => {
         // Toggle the visibility of the clicked group's table
         setVisibleGroups(prevState => ({
@@ -28,10 +28,16 @@ const Groups = () => {
             [groupId]: !prevState[groupId]
         }));
     };
+
+
     useEffect(() => {
-        getGroupsByUserId(3).then(results => {
+        const user = window.localStorage.getItem('loggedUser')
+        const id = JSON.parse(user ? user : '').id
+        setUserId(id)
+        getGroupsByUserId(id).then(results => {
             setGroups(results);
         });
+
     }, []); // Runs once when the component mounts
 
     useEffect(() => {
@@ -40,6 +46,7 @@ const Groups = () => {
             const fetchedExpensesPromises = groups.map(async (group) => {
                 try {
                     const results = await getExpensesByGroupId(group.group_id);
+                    console.log(results)
                     return results;
                 } catch (error) {
                     if (isAxiosError(error) && error.response && error.response.status === 404) {
@@ -58,9 +65,6 @@ const Groups = () => {
 
                 // Combine all the expenses into a single array or handle as needed
                 const combinedExpenses = fetchedExpensesResults.flat(); // Assuming you want to flatten the array of arrays
-
-                console.log("combined expenses");
-                console.log(combinedExpenses);
 
                 // Update the state with the combined expenses
                 setExpenses(combinedExpenses);
@@ -90,6 +94,7 @@ const Groups = () => {
                             <table className={`border border-solid border-black w-full ${visibleGroups[group.group_id] ? '' : 'hidden'}`}>
                                 <tbody>
                                     <tr>
+                                        <th className='border border-solid border-black'>Date</th>
                                         <th className='border border-solid border-black'>Description</th>
                                         <th className='border border-solid border-black'>Amount</th>
                                         <th className='border border-solid border-black'>Payer</th>
@@ -98,6 +103,7 @@ const Groups = () => {
                                 {expenses && expenses.filter(exp => exp.group_id === group.group_id).map((exp, index) => (
                                     <tbody key={index}>
                                         <tr>
+                                            <td className='border border-solid border-black'>{exp.date.slice(0, 10)}</td>
                                             <td className='border border-solid border-black'>{exp.description}</td>
                                             <td className='border border-solid border-black'>{exp.amount}</td>
                                             <td className='border border-solid border-black'>{exp.name}</td>

@@ -112,7 +112,7 @@ export async function getGroupsByUserId(user_id: number) {
 
 export async function getExpensesInfoByGroupId(group_id: number) {
   const [rows] = await pool.query(
-    `SELECT expenses.group_id, expenses.description, expenses.amount, users.name
+    `SELECT expenses.group_id, expenses.date, expenses.description, expenses.amount, users.name
     FROM expenses
     JOIN users on expenses.created_by=users.user_id
     WHERE expenses.group_id=?;`,[group_id]
@@ -120,7 +120,6 @@ export async function getExpensesInfoByGroupId(group_id: number) {
   if (Array.isArray(rows) && rows.length > 0) {
     // const groupNames = rows.map((row: any) => row.group_name)
     // console.log(groupNames)
-    console.log(rows)
     return rows
   }
   return null

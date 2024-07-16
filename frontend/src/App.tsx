@@ -4,15 +4,20 @@ import Dashboard from './components/Dashboard/Dashboard'
 import Friends from './components/Friends/Friends';
 import Groups from './components/Groups/Groups';
 import Navbar from './components/Navbar/Navbar'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import Settings from './components/Settings/Settings';
+import { Login } from './components/Login/Login';
+
+
+
+
 function App() {
+  const location = useLocation();
   return (
-    <BrowserRouter>
       <div className='flex w-full'>
-        <Navbar />  
+        {location.pathname !== '/login' && <Navbar />}
         <Routes>
-        <Route path='/' element={<Dashboard />} />
+          <Route path='/login' element={<Login />} />
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='friends' element={<Friends />} />
           <Route path='groups' element={<Groups />} />
@@ -21,7 +26,6 @@ function App() {
           <Route path='settings' element={<Settings />} />
         </Routes>
       </div>
-    </BrowserRouter>
   )
 }
 
