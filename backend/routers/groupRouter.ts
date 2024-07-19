@@ -11,22 +11,10 @@ import {
   getExpensesInfoByGroupId,
 } from "../controllers/group.controller"
 
-import jwt, { UserJwtPayload } from "jsonwebtoken"
-import config from "../middlewares/config"
 import { authenticateUser, verifyToken } from "../middlewares/verifyToken"
 import { UserRequest } from "../types/user"
 
 const groupRouter = express.Router()
-
-const getTokenFrom = (req: Request) => {
-  const authorization = req.get("authorization")
-  if (authorization && authorization.startsWith("Bearer ")) {
-    return authorization.replace("Bearer ", "")
-  }
-  return ""
-}
-
-
 
 
 // Get all group information
@@ -71,10 +59,9 @@ groupRouter.get(
   async (req: UserRequest, res: Response) => {
 
     const user = req.user
-    
     const group_id = parseInt(req.params.group_id)
     try {
-      const expenses = await getExpensesInfoByGroupId(group_id)
+      const expenses = await getExpensesInfoByGroupId(group_id, Number(user))
 
       if (expenses) {
         res.status(200).json(expenses)
@@ -89,6 +76,9 @@ groupRouter.get(
   }
 )
 
+
+
+// Create a new group
 groupRouter.post(
   "/groups",
   authenticateUser,
@@ -96,7 +86,15 @@ groupRouter.post(
     try {
       const newGroup: Group = req.body
       const createdGroup = await createGroup(newGroup)
+
+      if (!createdGroup || !createdGroup.id) {
+        res.status(500).json({ message: "Failed to create group" });
+        return;
+      }
+
+      await addUserToGroup(createdGroup.id, createdGroup.created_by);
       res.status(201).json(createdGroup)
+      
     } catch (err) {
       if (err instanceof Error) {
         res.status(500).json({ message: err.message })

@@ -110,12 +110,30 @@ export async function getGroupsByUserId(user_id: number) {
   return null
 }
 
-export async function getExpensesInfoByGroupId(group_id: number) {
+export async function getExpensesInfoByGroupId(group_id: number, user_id: number) {
   const [rows] = await pool.query(
-    `SELECT expenses.group_id, expenses.date, expenses.description, expenses.amount, users.name
-    FROM expenses
-    JOIN users on expenses.created_by=users.user_id
-    WHERE expenses.group_id=?;`,[group_id]
+    `SELECT
+    e.group_id,
+    e.date,
+    e.description,
+    e.amount,
+    u.name AS creator_name,
+    us.name AS sharer_name,
+    es.share_amount
+FROM
+    expenses e
+JOIN
+    users u ON e.created_by = u.user_id
+JOIN
+    expense_shares es ON e.expense_id = es.expense_id
+JOIN
+    users us ON es.user_id = us.user_id
+WHERE
+    e.group_id = ?
+AND
+    us.user_id = ?;
+`,
+  [group_id, user_id]
   )
   if (Array.isArray(rows) && rows.length > 0) {
     // const groupNames = rows.map((row: any) => row.group_name)
@@ -123,5 +141,4 @@ export async function getExpensesInfoByGroupId(group_id: number) {
     return rows
   }
   return null
-
 }

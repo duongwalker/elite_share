@@ -26,8 +26,6 @@ const getConfig = () => {
 
 export async function getGroupsByUserId(id: number) {
   try {
-    console.log("config")
-    console.log(getConfig())
     const response = await axios.get(
       `${baseUrl}/user-groups/${id}`,
       getConfig()
@@ -41,6 +39,20 @@ export async function getGroupsByUserId(id: number) {
 }
 
 export async function getExpensesByGroupId(id: number) {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/groups/${id}/expenses`,
+      getConfig()
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    throw error
+  }
+}
+
+
+export async function addGroup() {
   try {
     const response = await axios.get(
       `${baseUrl}/groups/${id}/expenses`,
