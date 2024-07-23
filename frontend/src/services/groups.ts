@@ -52,10 +52,14 @@ export async function getExpensesByGroupId(id: number) {
 }
 
 
-export async function addGroup() {
+export async function createGroup(group_name: string, user_id: number) {
   try {
-    const response = await axios.get(
-      `${baseUrl}/groups/${id}/expenses`,
+    const newGroup = {
+      group_name: group_name,
+      created_by: user_id
+    }
+    const response = await axios.post(
+      `${baseUrl}/groups`, newGroup,
       getConfig()
     )
     return response.data

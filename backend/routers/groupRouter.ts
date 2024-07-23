@@ -94,7 +94,7 @@ groupRouter.post(
 
       await addUserToGroup(createdGroup.id, createdGroup.created_by);
       res.status(201).json(createdGroup)
-      
+
     } catch (err) {
       if (err instanceof Error) {
         res.status(500).json({ message: err.message })
