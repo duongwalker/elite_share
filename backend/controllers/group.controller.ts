@@ -38,10 +38,22 @@ export async function createGroup(group: Group) {
 export async function deleteGroup(group_id: GroupId) {
   //ADD Authenticate User MIDDLEWARE
   try {
-    const [result] = await pool.query("DELETE FROM `groups` WHERE group_id=?", [
-      group_id,
-    ])
+    await pool.query("DELETE FROM `groups` WHERE group_id=?", [group_id])
     return { group_id }
+  } catch (err) {
+    console.error("Error creating group:", err)
+  }
+}
+
+export async function updateGroupName(group_id: GroupId, updatedGroup: Group) {
+  //ADD Authenticate User MIDDLEWARE
+  try {
+    console.log('group_name')
+    console.log(updatedGroup.group_name)
+    await pool.query("UPDATE `Groups`SET group_name =? WHERE group_id = ?;", [
+      updatedGroup.group_name, group_id,
+    ])
+    return { group_id, group_name: updatedGroup.group_name }
   } catch (err) {
     console.error("Error creating group:", err)
   }
@@ -110,7 +122,10 @@ export async function getGroupsByUserId(user_id: number) {
   return null
 }
 
-export async function getExpensesInfoByGroupId(group_id: number, user_id: number) {
+export async function getExpensesInfoByGroupId(
+  group_id: number,
+  user_id: number
+) {
   const [rows] = await pool.query(
     `SELECT
     e.group_id,
@@ -133,7 +148,7 @@ WHERE
 AND
     us.user_id = ?;
 `,
-  [group_id, user_id]
+    [group_id, user_id]
   )
   if (Array.isArray(rows) && rows.length > 0) {
     // const groupNames = rows.map((row: any) => row.group_name)

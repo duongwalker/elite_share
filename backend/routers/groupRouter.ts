@@ -9,6 +9,7 @@ import {
   deleteGroup,
   getGroupsByUserId,
   getExpensesInfoByGroupId,
+  updateGroupName,
 } from "../controllers/group.controller"
 
 import { authenticateUser, verifyToken } from "../middlewares/verifyToken"
@@ -105,6 +106,32 @@ groupRouter.post(
   }
 )
 
+// Update a group name
+groupRouter.put(
+  "/groups/:id",
+  authenticateUser,
+  async (req: Request, res: Response) => {
+    try {
+
+      const group_id = parseInt(req.params.id)
+      const newGroupInfo: Group = req.body
+
+      const updatedGroup = await updateGroupName(group_id, newGroupInfo)
+      res.status(201).json(updatedGroup)
+    } catch (err) {
+      if (err instanceof Error) {
+        res.status(500).json({ message: err.message })
+      } else {
+        res.status(500).json({ message: "An unknown error occurred" })
+      }
+    }
+  }
+)
+
+
+
+
+// Delete a group with group id
 groupRouter.delete(
   "/groups/:id",
   authenticateUser,

@@ -2,6 +2,12 @@ import axios from "axios"
 
 const baseUrl = "http://localhost:3001"
 
+
+interface Group {
+  group_id: number
+  group_name: string;
+}
+
 export const getToken = () => {
   // const user = JSON.parse(localStorage.getItem('loggedUser') || 'null')
   // if(user!=='null') {
@@ -60,6 +66,33 @@ export async function createGroup(group_name: string, user_id: number) {
     }
     const response = await axios.post(
       `${baseUrl}/groups`, newGroup,
+      getConfig()
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    throw error
+  }
+}
+
+
+export async function deleteGroup(group_id: number) {
+  try {
+    const response = await axios.delete(
+      `${baseUrl}/groups/${group_id}`,
+      getConfig()
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    throw error
+  }
+}
+
+export async function updateGroupName(newGroupInfo: Group) {
+  try {
+    const response = await axios.put(
+      `${baseUrl}/groups/${newGroupInfo.group_id}`, newGroupInfo,
       getConfig()
     )
     return response.data
