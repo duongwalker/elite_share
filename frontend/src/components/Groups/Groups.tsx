@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 
 interface Group {
-    group_id: number ;
+    group_id: number;
     group_name: string;
 }
 
@@ -50,12 +50,12 @@ export const Groups = () => {
     const [groups, setGroups] = useState<Group[]>([]);
     const [userId, setUserId] = useState<number>()
     const [openGroupForm, setOpenGroupForm] = useState(false);
-    const [selectedGroupId, setSelectedGroupId] = useState<number>(null);
+    const [selectedGroupId, setSelectedGroupId] = useState<number>();
     const [openChangeNameForm, setOpenChangeNameForm] = useState(false);
     // const [openMenu, setOpenMenu] = useState(false);
 
-    const { register: registerCreateName, handleSubmit:handleSubmitCreateName } = useForm<GroupCreatingFormInput>()
-    const { register: registerChangeName, handleSubmit: handleSubmitChangeName} = useForm<ChangeGroupNameFormInput>();
+    const { register: registerCreateName, handleSubmit: handleSubmitCreateName } = useForm<GroupCreatingFormInput>()
+    const { register: registerChangeName, handleSubmit: handleSubmitChangeName } = useForm<ChangeGroupNameFormInput>();
     // const { register, handleSubmit } = useForm<ChangeGroupNameFormInput>()
     const navigate = useNavigate();
 
@@ -68,10 +68,10 @@ export const Groups = () => {
         setOpenGroupForm(false)
     }
 
-    const onChangeNameSubmit : SubmitHandler<ChangeGroupNameFormInput> = async(data) => {
+    const onChangeNameSubmit: SubmitHandler<ChangeGroupNameFormInput> = async (data) => {
         console.log('group_name')
         console.log(data.newGroupName)
-        if(userId && selectedGroupId) {
+        if (userId && selectedGroupId) {
             const newGroupInfo = {
                 group_id: selectedGroupId,
                 group_name: data.newGroupName
@@ -80,6 +80,18 @@ export const Groups = () => {
             console.log('response')
             console.log(response)
         }
+        setGroups((prevGroups) => {
+            return prevGroups.map(group => {
+                if (group.group_id === selectedGroupId) {
+                    return { ...group, group_name: data.newGroupName }
+                }
+                else {
+                    return group
+                }
+            }
+            )
+        }
+        )
         setOpenChangeNameForm(false)
     }
 
@@ -104,7 +116,7 @@ export const Groups = () => {
     const handleOpenChangeNameForm = (groupId: number) => {
         setSelectedGroupId(groupId);
         setOpenChangeNameForm(true);
-      };
+    };
 
     useEffect(() => {
         const user = window.localStorage.getItem('loggedUser')
