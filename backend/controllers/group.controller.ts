@@ -28,6 +28,7 @@ export async function createGroup(group: Group) {
       "INSERT INTO `groups` (group_name, created_by) VALUES (?, ?)",
       [group_name, created_by]
     )
+    console.log(result)
     const insertedGroupId = (result as any).insertId
     return { id: insertedGroupId, group_name, created_by }
   } catch (err) {

@@ -23,14 +23,12 @@ interface User {
     name: string;
 }
 
-interface GroupCreatingFormInput {
+interface GroupCreatingInputForm {
     groupName: string
-
 }
 
-interface ChangeGroupNameFormInput {
+interface ChangeGroupNameInputForm {
     newGroupName: string
-
 }
 
 
@@ -41,7 +39,7 @@ const style = {
     transform: 'translate(-50%, -50%)',
     width: 400,
     bgcolor: 'background.paper',
-    border: '2px solid #000',
+    border: '2px solid ',
     boxShadow: 24,
     p: 4,
 };
@@ -52,14 +50,13 @@ export const Groups = () => {
     const [openGroupForm, setOpenGroupForm] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState<number>();
     const [openChangeNameForm, setOpenChangeNameForm] = useState(false);
-    // const [openMenu, setOpenMenu] = useState(false);
 
-    const { register: registerCreateName, handleSubmit: handleSubmitCreateName } = useForm<GroupCreatingFormInput>()
-    const { register: registerChangeName, handleSubmit: handleSubmitChangeName } = useForm<ChangeGroupNameFormInput>();
+    const { register: registerCreateName, handleSubmit: handleSubmitCreateName } = useForm<GroupCreatingInputForm>()
+    const { register: registerChangeName, handleSubmit: handleSubmitChangeName } = useForm<ChangeGroupNameInputForm>();
     // const { register, handleSubmit } = useForm<ChangeGroupNameFormInput>()
     const navigate = useNavigate();
 
-    const onCreateGroupSubmit: SubmitHandler<GroupCreatingFormInput> = async (data) => {
+    const onCreateGroupSubmit: SubmitHandler<GroupCreatingInputForm> = async (data) => {
         if (userId) {
             const returnedData = await createGroup(data.groupName, userId)
             const newGroup = { group_id: returnedData.id, group_name: returnedData.group_name }
@@ -68,7 +65,7 @@ export const Groups = () => {
         setOpenGroupForm(false)
     }
 
-    const onChangeNameSubmit: SubmitHandler<ChangeGroupNameFormInput> = async (data) => {
+    const onChangeNameSubmit: SubmitHandler<ChangeGroupNameInputForm> = async (data) => {
         console.log('group_name')
         console.log(data.newGroupName)
         if (userId && selectedGroupId) {
@@ -94,9 +91,6 @@ export const Groups = () => {
         )
         setOpenChangeNameForm(false)
     }
-
-    // const handleOpenMenu = () => setOpenMenu(true);
-    // const handleCloseMenu = () => setOpenMenu(false);
 
     const handleDeleteGroup = async (group_id: number) => {
         const response = await deleteGroup(group_id)
@@ -151,17 +145,8 @@ export const Groups = () => {
                 aria-describedby="modal-modal-description"
             >
                 <Box sx={style}>
-                    {/* <Typography id="modal-modal-title" variant="h6" component="h2">
-                        Text in a modal
-                    </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-                    </Typography> */}
-
                     <form onSubmit={handleSubmitCreateName(onCreateGroupSubmit)}>
-                        <input {...registerCreateName("groupName", { required: true, maxLength: 20 })} />
-                        {/* <input {...register("lastName", { pattern: /^[A-Za-z]+$/i })} />
-                        <input type="number" {...register("age", { min: 18, max: 99 })} /> */}
+                        <input placeholder='Group name' {...registerCreateName("groupName", { required: true, maxLength: 20 })} style={{ border: '2px solid #000' }} />
                         <input type="submit" />
                     </form>
                 </Box>
@@ -218,7 +203,7 @@ export const Groups = () => {
                             >
                                 <Box sx={style}>
                                     <form onSubmit={handleSubmitChangeName(onChangeNameSubmit)}>
-                                        <input {...registerChangeName("newGroupName", { required: true, maxLength: 20 })} />
+                                        <input placeholder='New name'{...registerChangeName("newGroupName", { required: true, maxLength: 20 })} style={{ border: '2px solid #000' }} />
                                         <input type="submit" />
                                     </form>
                                 </Box>

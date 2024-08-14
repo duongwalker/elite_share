@@ -2,22 +2,12 @@ import axios from "axios"
 
 const baseUrl = "http://localhost:3001"
 
-
 interface Group {
   group_id: number
-  group_name: string;
+  group_name: string
 }
 
 export const getToken = () => {
-  // const user = JSON.parse(localStorage.getItem('loggedUser') || 'null')
-  // if(user!=='null') {
-  //     const token = user ? user.accessToken : null;
-  //     return token
-  // }
-  // else {
-  //     return null
-  // }
-
   const user = window.localStorage.getItem("loggedUser")
   const parsedUser = user ? JSON.parse(user) : null
   return parsedUser ? parsedUser.accessToken : null
@@ -57,15 +47,15 @@ export async function getExpensesByGroupId(id: number) {
   }
 }
 
-
 export async function createGroup(group_name: string, user_id: number) {
   try {
     const newGroup = {
       group_name: group_name,
-      created_by: user_id
+      created_by: user_id,
     }
     const response = await axios.post(
-      `${baseUrl}/groups`, newGroup,
+      `${baseUrl}/groups`,
+      newGroup,
       getConfig()
     )
     return response.data
@@ -74,7 +64,6 @@ export async function createGroup(group_name: string, user_id: number) {
     throw error
   }
 }
-
 
 export async function deleteGroup(group_id: number) {
   try {
@@ -92,12 +81,24 @@ export async function deleteGroup(group_id: number) {
 export async function updateGroupName(newGroupInfo: Group) {
   try {
     const response = await axios.put(
-      `${baseUrl}/groups/${newGroupInfo.group_id}`, newGroupInfo,
+      `${baseUrl}/groups/${newGroupInfo.group_id}`,
+      newGroupInfo,
       getConfig()
     )
     return response.data
   } catch (error) {
     console.error("Error fetching data:", error)
+    throw error
+  }
+}
+
+export async function createGroupExpense(group_id: number) {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    const response = await axios.post(`${baseUrl}/groups/${group_id}`)
+    return response
+  }
+  catch (error) {
     throw error
   }
 }

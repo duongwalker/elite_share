@@ -79,6 +79,8 @@ groupRouter.get(
 
 
 
+
+
 // Create a new group
 groupRouter.post(
   "/groups",
@@ -127,9 +129,6 @@ groupRouter.put(
     }
   }
 )
-
-
-
 
 // Delete a group with group id
 groupRouter.delete(
@@ -193,9 +192,5 @@ groupRouter.delete(
   }
 )
 
-groupRouter.get(
-  "/groups/:group_id/deleteUser",
-  async (req: Request, res: Response) => {}
-)
 
 export default groupRouter

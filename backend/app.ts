@@ -4,6 +4,7 @@ import groupRouter from "./routers/groupRouter";
 import cors from 'cors';
 import loginRouter from "./routers/loginRouter";
 import errorHandler from "./middlewares/errorHandler";
+import expenseRouter from "./routers/expenseRouter";
 const app = express();
 
 app.use(cors());
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use(userRouter);
 app.use(groupRouter);
 app.use(loginRouter)
+app.use(expenseRouter)
 app.use(errorHandler)
 
 const PORT = process.env.PORT || 3001;

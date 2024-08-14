@@ -79,6 +79,7 @@ export const Login = () => {
                         placeholder=" Password"
                         onChange={(ev) => setPassword(ev.target.value)}
                         className='rounded-sm'
+                        type="password"
                     />
                     <label className="errorLabel text-red-500 text-xs font-bold">{passwordError}</label>
                 </div>
