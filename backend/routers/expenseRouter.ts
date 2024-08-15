@@ -34,14 +34,14 @@ expenseRouter.post(
   }
 )
 
-expenseRouter.post(
-  "/settle-up",
+expenseRouter.get(
+  "/groups/:group_id/settle-up",
   authenticateUser,
   async (req: UserRequest, res: Response) => {
-    const group_id = req.body.group_id
-    const users = await getTransactionsByGroupId(group_id)
+    const group_id = parseInt(req.params.group_id)
+    const transactions = await getTransactionsByGroupId(group_id)
 
-    res.json(users)
+    res.json(transactions)
   }
 )
 

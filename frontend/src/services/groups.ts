@@ -102,3 +102,17 @@ export async function createGroupExpense(group_id: number) {
     throw error
   }
 }
+
+
+export async function getSettledGroupTransactions(group_id: number) {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/groups/${group_id}/settle-up`,
+      getConfig()
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    throw error
+  }
+}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getExpensesByGroupId } from "../../services/groups";
+import { getExpensesByGroupId, getSettledGroupTransactions } from "../../services/groups";
 import { isAxiosError } from "axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
@@ -24,14 +24,22 @@ interface ExpenseCreatingInputForm {
 }
 
 
+interface Transaction {
+    from: string
+    to: string
+    amount: number
+}
 
 export const GroupExpenses = () => {
-    const [expenses, setExpenses] = useState<Expense[]>([]);
+    const [expenses, setExpenses] = useState<Expense[] | null>(null);
     const { id } = useParams()
     const navigate = useNavigate();
     const [openCreateExpenseForm, setOpenCreateExpenseForm] = useState(false);
     const [openShareExpenseModal, setOpenShareExpenseModal] = useState(false);
     const { register: registerCreateExpense, handleSubmit: handleSubmitCreateExpense } = useForm<ExpenseCreatingInputForm>()
+    const [transactions, setTransactions] = useState<Transaction[] | null>(null);
+
+
     useEffect(() => {
 
         const fetchExpenses = async () => {
@@ -71,40 +79,44 @@ export const GroupExpenses = () => {
         p: 4,
     };
 
-    const onCreateExpenseSubmit: SubmitHandler<ExpenseCreatingInputForm> = async (data) => {
-        
+    const onCreateExpenseSubmit: SubmitHandler<ExpenseCreatingInputForm> = async () => {
+
     }
 
+    const handleSettleUp = async (group_id: number) => {
+        const transactions = await getSettledGroupTransactions(group_id)
+        setTransactions(transactions)
+    }
 
     return (
 
         <div className="mx-56 my-9 font-bold w-3/4 flex content-between">
             <button onClick={handleOnClickBackButton}>Back to group</button>
             <div>
-                <table className={`border border-solid border-black w-full `}>
-                    <tbody>
-                        <tr>
-                            <th className='border border-solid border-black'>Date</th>
-                            <th className='border border-solid border-black'>Description</th>
-                            <th className='border border-solid border-black'>Amount</th>
-                            <th className='border border-solid border-black'>Payer</th>
-                            <th className='border border-solid border-black'>Your share</th>
-                        </tr>
-                    </tbody>
-                    {expenses && expenses.filter(exp => exp.group_id === Number(id)).map((exp, index) => (
-                        <tbody key={index}>
+                {expenses && (
+                    <table className={`border border-solid border-black w-full `}>
+                        <tbody>
                             <tr>
-                                <td className='border border-solid border-black'>{exp.date.slice(0, 10)}</td>
-                                <td className='border border-solid border-black'>{exp.description}</td>
-                                <td className='border border-solid border-black'>{exp.amount}</td>
-                                <td className='border border-solid border-black'>{exp.creator_name}</td>
-                                <td className='border border-solid border-black'>{exp.share_amount}</td>
+                                <th className='border border-solid border-black'>Date</th>
+                                <th className='border border-solid border-black'>Description</th>
+                                <th className='border border-solid border-black'>Amount</th>
+                                <th className='border border-solid border-black'>Payer</th>
+                                <th className='border border-solid border-black'>Your share</th>
                             </tr>
                         </tbody>
-                    ))}
-                </table>
-
-
+                        {expenses && expenses.filter(exp => exp.group_id === Number(id)).map((exp, index) => (
+                            <tbody key={index}>
+                                <tr>
+                                    <td className='border border-solid border-black'>{exp.date.slice(0, 10)}</td>
+                                    <td className='border border-solid border-black'>{exp.description}</td>
+                                    <td className='border border-solid border-black'>{exp.amount}</td>
+                                    <td className='border border-solid border-black'>{exp.creator_name}</td>
+                                    <td className='border border-solid border-black'>{exp.share_amount}</td>
+                                </tr>
+                            </tbody>
+                        ))}
+                    </table>
+                )}
 
                 <Button onClick={() => setOpenCreateExpenseForm(!openCreateExpenseForm)} sx={{
                     backgroundColor: "#464BD8", color: "white", '&:hover': {
@@ -112,6 +124,35 @@ export const GroupExpenses = () => {
                         color: '#333333',
                     },
                 }}>Add expense</Button>
+                <Button onClick={() => handleSettleUp(Number(id))} sx={{
+                    backgroundColor: "#464BD8", color: "white", '&:hover': {
+                        backgroundColor: '#DDDDDD',
+                        color: '#333333',
+                    },
+                }}>Settle up</Button>
+
+                {transactions && (
+                    <table className={`border border-solid border-black w-full `}>
+                        <tbody>
+                            <tr>
+                                <th className='border border-solid border-black'>From</th>
+                                <th className='border border-solid border-black'>To</th>
+                                <th className='border border-solid border-black'>Amount</th>
+                            </tr>
+                        </tbody>
+
+                        {transactions.map((transaction: Transaction, index: number) => (
+                            <tbody key={index}>
+                                <tr>
+                                    <td className='border border-solid border-black'>{transaction.from}</td>
+                                    <td className='border border-solid border-black'>{transaction.to}</td>
+                                    <td className='border border-solid border-black'>{transaction.amount}</td>
+                                </tr>
+                            </tbody>
+                        ))}
+                    </table>
+                )}
+
 
 
 
