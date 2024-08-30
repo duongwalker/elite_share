@@ -1,6 +1,6 @@
-# README Boilerplate
+# Elite Share - Expense Sharing web application
 
-A template of README best practices to make your README simple to understand and easy to use.
+Welcome to Elite Share - a web sharing expense application inspired by Splitwise and Mobile Pay functionality.
 
 ## Table of Contents
 

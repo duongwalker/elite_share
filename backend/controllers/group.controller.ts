@@ -60,10 +60,10 @@ export async function updateGroupName(group_id: GroupId, updatedGroup: Group) {
   }
 }
 
-export async function getAllUserFromGroup(groupId: GroupId) {
+export async function getAllUsersFromGroup(groupId: GroupId) {
   try {
-    await pool.query(
-      `SELECT u.name, g.group_name
+    const [result] = await pool.query(
+      `SELECT u.name, g.group_name, u.user_id
       FROM users u
       JOIN group_members gm ON u.user_id = gm.user_id
       JOIN \`groups\` g ON gm.group_id = g.group_id
@@ -71,6 +71,7 @@ export async function getAllUserFromGroup(groupId: GroupId) {
 `,
       [groupId]
     )
+    return result
   } catch (err) {
     console.error("Error:", err)
   }

@@ -7,6 +7,21 @@ interface Group {
   group_name: string
 }
 
+interface ExpenseShare {
+  user_id: number;
+  amount: number;
+}
+
+interface Expense {
+  expense_id?: number
+  group_id: number | null
+  created_by: number | null
+  amount: number
+  description: string
+  date: string
+  shares?: ExpenseShare[];
+}
+
 export const getToken = () => {
   const user = window.localStorage.getItem("loggedUser")
   const parsedUser = user ? JSON.parse(user) : null
@@ -73,7 +88,7 @@ export async function deleteGroup(group_id: number) {
     )
     return response.data
   } catch (error) {
-    console.error("Error fetching data:", error)
+    console.error("Error deleting data:", error)
     throw error
   }
 }
@@ -92,17 +107,16 @@ export async function updateGroupName(newGroupInfo: Group) {
   }
 }
 
-export async function createGroupExpense(group_id: number) {
-  // eslint-disable-next-line no-useless-catch
+export async function createGroupExpense(expense: Expense) {
   try {
-    const response = await axios.post(`${baseUrl}/groups/${group_id}`)
-    return response
-  }
-  catch (error) {
+    const response = await axios.post(`${baseUrl}/expenses`, expense, getConfig())
+    return response.data
+
+  } catch (error) {
+    console.error("Error fetching data:", error)
     throw error
   }
 }
-
 
 export async function getSettledGroupTransactions(group_id: number) {
   try {
@@ -116,3 +130,17 @@ export async function getSettledGroupTransactions(group_id: number) {
     throw error
   }
 }
+
+export async function getGroupMembersByGroupId(group_id: number) {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/groups/${group_id}/members`,
+      getConfig()
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error fetching data:", error)
+    throw error
+  }
+}
+

@@ -9,6 +9,7 @@ import {
   deleteGroup,
   getGroupsByUserId,
   getExpensesInfoByGroupId,
+  getAllUsersFromGroup,
   updateGroupName,
 } from "../controllers/group.controller"
 
@@ -78,6 +79,29 @@ groupRouter.get(
 )
 
 
+// Get all members of a group by group id
+groupRouter.get(
+  "/groups/:group_id/members",
+  authenticateUser,
+  async (req: UserRequest, res: Response) => {
+
+    const user = req.user
+    const group_id = parseInt(req.params.group_id)
+    try {
+      const members = await getAllUsersFromGroup(group_id)
+
+      if (members) {
+        res.status(200).json(members)
+      } else {
+        res.status(404).json({ message: "No member found for this group" })
+      }
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: "An error occurred while fetching expenses", error })
+    }
+  }
+)
 
 
 

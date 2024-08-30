@@ -8,9 +8,7 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Settings from './components/Settings/Settings';
 import { Login } from './components/Login/Login';
 import { GroupExpenses } from './components/Groups/GroupExpenses';
-
-
-
+import { NotFound } from './components/NotFound/NotFound';
 
 function App() {
   const location = useLocation();
@@ -26,6 +24,7 @@ function App() {
         <Route path='friends' element={<Friends />} />
         <Route path='activities' element={<Activities />} />
         <Route path='settings' element={<Settings />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   )

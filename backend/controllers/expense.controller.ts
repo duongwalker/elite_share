@@ -38,25 +38,25 @@ export async function getTransactionsByGroupId(groupId: number) {
       WHERE group_id = ?`,
       [groupId]
     )
-    // console.log("results")
-    // console.log(results)
     let users: ExpenseShare[] = []
 
     if (Array.isArray(expenseResults) && expenseResults.length > 0) {
       const convertedExpenseResults = expenseResults as Array<Expense>
       convertedExpenseResults.forEach((result) => {
-        const userId = result.created_by
-        const amount = Number(result.amount) // Convert the amount to a number
-        const userName = result.name
-        const user = users.find((user) => user.user_id === userId)
-        if (user) {
-          user.share_amount += amount // Add the amount if the user already exists in the object
-        } else {
-          users.push({
-            user_id: userId,
-            name: userName,
-            share_amount: amount,
-          }) // Initialize the user with the amount if not present
+        if(result.name) {
+          const userId = result.created_by
+          const amount = Number(result.amount) // Convert the amount to a number
+          const userName = result.name
+          const user = users.find((user) => user.user_id === userId)
+          if (user) {
+            user.share_amount += amount // Add the amount if the user already exists in the object
+          } else {
+            users.push({
+              user_id: userId,
+              name: userName,
+              share_amount: amount,
+            }) // Initialize the user with the amount if not present
+          }
         }
       })
       const expense_ids = convertedExpenseResults.map(
@@ -73,8 +73,8 @@ export async function getTransactionsByGroupId(groupId: number) {
         expense_ids
       )
 
-      const convertedExpenseShareResults =
-        expenseShareResults as Array<ExpenseShare>
+      const convertedExpenseShareResults = expenseShareResults as Array<ExpenseShare>
+
       convertedExpenseShareResults.forEach((result) => {
         const userId = result.user_id
         const amount = Number(result.share_amount) // Convert the amount to a number

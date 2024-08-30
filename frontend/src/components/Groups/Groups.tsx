@@ -10,7 +10,8 @@ import { Box, Button, CardActionArea } from '@mui/material';
 import Modal from '@mui/material/Modal';
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
+// import MenuIcon from '@mui/icons-material/Menu';
+import useUserStore from '../../states/useUserStore';
 
 interface Group {
     group_id: number;
@@ -46,7 +47,8 @@ const style = {
 
 export const Groups = () => {
     const [groups, setGroups] = useState<Group[]>([]);
-    const [userId, setUserId] = useState<number>()
+    // const [userId, setUserId] = useState<number>()
+    const {userId, setUserId} = useUserStore()
     const [openGroupForm, setOpenGroupForm] = useState(false);
     const [selectedGroupId, setSelectedGroupId] = useState<number>();
     const [openChangeNameForm, setOpenChangeNameForm] = useState(false);
@@ -121,7 +123,7 @@ export const Groups = () => {
             setGroups(results);
         });
 
-    }, []);
+    }, [setUserId]);
 
 
     return (
