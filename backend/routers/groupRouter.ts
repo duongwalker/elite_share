@@ -18,7 +18,6 @@ import { UserRequest } from "../types/user"
 
 const groupRouter = express.Router()
 
-
 // Get all group information
 groupRouter.get(
   "/groups",

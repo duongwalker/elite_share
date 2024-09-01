@@ -9,6 +9,7 @@ import { useForm, SubmitHandler } from "react-hook-form"
 import { CheckboxList } from "../List/CheckboxList";
 import useUserStore from "../../states/useUserStore";
 import { createGroupExpense } from "../../services/groups";
+import { jwtDecode } from "jwt-decode";
 
 interface FetchedExpense {
     group_id: number;
@@ -24,6 +25,13 @@ interface ExpenseShare {
     user_id: number;
     amount: number;
 }
+
+interface User {
+    accessToken: string;
+    id: number;
+    name: string;
+}
+
 
 // interface CreatedExpense {
 //     expense_id?: number
@@ -63,8 +71,16 @@ export const GroupExpenses = () => {
     const [transactions, setTransactions] = useState<Transaction[] | null>(null);
     const [members, setMembers] = useState<GroupMember[]>([]);
     const [shareMemberIds, setShareMemberIds] = useState<number[]>([]);
-    const { userId } = useUserStore()
+    const { userId, setUserId } = useUserStore()
 
+
+    useEffect(() => {
+        const user = window.localStorage.getItem('loggedUser')
+        const decodedToken = jwtDecode<User>(JSON.parse(user ? user : '').accessToken)
+        const id = decodedToken.id
+        setUserId(id)
+
+    }, [setUserId]);
 
     useEffect(() => {
         console.log("userid")
@@ -108,6 +124,8 @@ export const GroupExpenses = () => {
         fetchExpenses();
         fetchGroupMembers();
     }, [id]); // Runs every time id changes
+
+
 
 
     const handleOnClickBackButton = () => {
